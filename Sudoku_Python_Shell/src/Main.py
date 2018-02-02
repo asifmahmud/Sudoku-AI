@@ -43,7 +43,7 @@ def main ( ):
         sudokudata = SudokuBoard.SudokuBoard( 3, 3, 7 )
         print(sudokudata)
 
-        solver = BTSolver.BTSolver( sudokudata, val_sh, var_sh, cc )
+        solver = BTSolver.BTSolver( sudokudata, var_sh, val_sh, cc )
         solver.solve()
 
         if solver.hassolution:
@@ -81,7 +81,7 @@ def main ( ):
     sudokudata =  SudokuBoard.SudokuBoard( filepath=file )
     print(sudokudata)
 
-    solver = BTSolver.BTSolver( sudokudata, val_sh, var_sh, cc )
+    solver = BTSolver.BTSolver( sudokudata, var_sh, val_sh, cc )
     solver.solve()
 
     if solver.hassolution:

@@ -5,6 +5,7 @@ import Trail
 import Constraint
 import ConstraintNetwork
 import time
+import sys
 
 class BTSolver:
 
@@ -24,11 +25,10 @@ class BTSolver:
 ##lab 1
     def getValuesLCVOrder(self, v):
         print("hi I am doing some work")
-        mini = -1
-        if not v.isAssigned():
-            for i in (self.network.getConstraintsContainingVariable(v)):
-                if i > mini:
-                    mini = i
+        mini = sys.maxsize
+        for i in range(v.size()-1):
+            if (v.Values())[i] < mini:
+                mini = i
         return mini
         
 ##lab 1
@@ -40,7 +40,6 @@ class BTSolver:
 
 ##lab 1
     def getMRV(self):
-        print("doing sth")
         mini = sys.maxsize
         s_v = None
         for v in self.network.variables:
@@ -48,8 +47,7 @@ class BTSolver:
                  m = len(self.network.getConstraintsContainingVariable(v))
                  if m< mini:
                      mini = m
-                     s_v = v
-                     
+                     s_v = v       
         """
             TODO: Implement MRV heuristic
             @return variable with minimum remaining values that isn't assigned, null if all variables are assigned.
