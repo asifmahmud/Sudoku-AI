@@ -11,7 +11,6 @@ import time
 
 def main ( ):
     args = sys.argv
-
     # Important Variables
     file   = "";
     var_sh = "";
@@ -68,7 +67,7 @@ def main ( ):
                 print ( "Running board: " + str(f) )
                 sudokudata = SudokuBoard.SudokuBoard( filepath=f )
 
-                solver = BTSolver.BTSolver( sudokudata, val_sh, var_sh, cc )
+                solver = BTSolver.BTSolver( sudokudata, var_sh, val_sh, cc )
                 solver.solve()
 
                 if solver.hassolution:

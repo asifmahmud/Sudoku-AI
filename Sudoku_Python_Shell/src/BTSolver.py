@@ -21,11 +21,41 @@ class BTSolver:
 
     ######### Implement These Methods #########
 
+##lab 1
+    def getValuesLCVOrder(self, v):
+        print("hi I am doing some work")
+        mini = -1
+        if not v.isAssigned():
+            for i in (self.network.getConstraintsContainingVariable(v)):
+                if i > mini:
+                    mini = i
+        return mini
+        
+##lab 1
     def forwardChecking(self):
         """
            TODO:  Implement forward checking.
         """
         pass
+
+##lab 1
+    def getMRV(self):
+        print("doing sth")
+        mini = sys.maxsize
+        s_v = None
+        for v in self.network.variables:
+            if not v.isAssigned():
+                 m = len(self.network.getConstraintsContainingVariable(v))
+                 if m< mini:
+                     mini = m
+                     s_v = v
+                     
+        """
+            TODO: Implement MRV heuristic
+            @return variable with minimum remaining values that isn't assigned, null if all variables are assigned.
+        """
+        return s_v
+
 
     def norvigCheck(self):
         """
@@ -56,12 +86,7 @@ class BTSolver:
                 return v
         return None
 
-    def getMRV(self):
-        """
-            TODO: Implement MRV heuristic
-            @return variable with minimum remaining values that isn't assigned, null if all variables are assigned.
-        """
-        pass
+
 
     def getDegree(self):
         """
@@ -86,11 +111,6 @@ class BTSolver:
         return sorted(values)
 
 
-    def getValuesLCVOrder(self, v):
-        """
-            TODO: LCV heuristic
-        """
-        pass
 
     ######### Accessors Method #########
     def getSolution(self):
