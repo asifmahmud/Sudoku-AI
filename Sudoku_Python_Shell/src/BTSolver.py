@@ -24,12 +24,32 @@ class BTSolver:
 
 ##lab 1
     def getValuesLCVOrder(self, v):
+        '''
         print("hi I am doing some work")
         mini = sys.maxsize
         for i in range(v.size()-1):
             if (v.Values())[i] < mini:
                 mini = i
         return mini
+
+        '''
+        minValue = sys.maxsize
+        minConstraint = sys.maxsize
+        constraints = {}
+        neighbors = self.network.getNeighborsOfVariable(v)
+        for i in v.Values():
+            constraints[i] = 0
+            for n in neighbors:
+                if (i in n.Values()):
+                    n.removeValueFromDomain(i)
+                    constraints[i] += 1
+
+        for k,v in constraints.items():
+            if v < minConstraint:
+                minValue = k
+                minConstraint = v
+
+        return minValue
         
 ##lab 1
     def forwardChecking(self):
@@ -40,6 +60,10 @@ class BTSolver:
 
 ##lab 1
     def getMRV(self):
+        """
+            TODO: Implement MRV heuristic
+            @return variable with minimum remaining values that isn't assigned, null if all variables are assigned.
+        """
         mini = sys.maxsize
         s_v = None
         for v in self.network.variables:
@@ -48,10 +72,6 @@ class BTSolver:
                  if m< mini:
                      mini = m
                      s_v = v       
-        """
-            TODO: Implement MRV heuristic
-            @return variable with minimum remaining values that isn't assigned, null if all variables are assigned.
-        """
         return s_v
 
 
