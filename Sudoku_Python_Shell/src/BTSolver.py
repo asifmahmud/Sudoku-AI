@@ -6,11 +6,12 @@ import Constraint
 import ConstraintNetwork
 import time
 import sys
+import operator
 
 class BTSolver:
 
     ######### Constructors Method #########
-    def __init__(self, gb, var_sh, val_sh, cc):
+    def __init__(self, gb, val_sh, var_sh, cc):
         self.network = ConstraintNetwork.ConstraintNetwork(gb)
         self.trail = Trail.masterTrailVariable
         self.hassolution = False
@@ -22,58 +23,11 @@ class BTSolver:
 
     ######### Implement These Methods #########
 
-##lab 1
-    def getValuesLCVOrder(self, v):
-        '''
-        print("hi I am doing some work")
-        mini = sys.maxsize
-        for i in range(v.size()-1):
-            if (v.Values())[i] < mini:
-                mini = i
-        return mini
-
-        '''
-        minValue = sys.maxsize
-        minConstraint = sys.maxsize
-        constraints = {}
-        neighbors = self.network.getNeighborsOfVariable(v)
-        for i in v.Values():
-            constraints[i] = 0
-            for n in neighbors:
-                if (i in n.Values()):
-                    n.removeValueFromDomain(i)
-                    constraints[i] += 1
-
-        for k,v in constraints.items():
-            if v < minConstraint:
-                minValue = k
-                minConstraint = v
-
-        return minValue
-        
-##lab 1
     def forwardChecking(self):
         """
            TODO:  Implement forward checking.
         """
         pass
-
-##lab 1
-    def getMRV(self):
-        """
-            TODO: Implement MRV heuristic
-            @return variable with minimum remaining values that isn't assigned, null if all variables are assigned.
-        """
-        mini = sys.maxsize
-        s_v = None
-        for v in self.network.variables:
-            if not v.isAssigned():
-                 m = len(self.network.getConstraintsContainingVariable(v))
-                 if m< mini:
-                     mini = m
-                     s_v = v       
-        return s_v
-
 
     def norvigCheck(self):
         """
@@ -104,7 +58,21 @@ class BTSolver:
                 return v
         return None
 
-
+    def getMRV(self):
+        """
+            TODO: Implement MRV heuristic
+            @return variable with minimum remaining values that isn't assigned, null if all variables are assigned.
+        """
+        mini = sys.maxsize
+        s_v = None
+        for v in self.network.variables:
+            if not v.isAssigned():
+                 m = len(self.network.getConstraintsContainingVariable(v))
+                 if m< mini:
+                     mini = m
+                     s_v = v       
+        return s_v
+        
 
     def getDegree(self):
         """
@@ -129,6 +97,21 @@ class BTSolver:
         return sorted(values)
 
 
+    def __sortKey(self, value, v):
+        constraintCount = 0
+        for var in self.network.getNeighborsOfVariable(v):
+            if value in var.Values():
+                constraintCount += 1
+        return constraintCount
+
+    def getValuesLCVOrder(self, v):
+        """
+            TODO: LCV heuristic
+        """
+        return sorted(v.domain.values, key=lambda i:self.__sortKey(i,v))
+
+
+        
 
     ######### Accessors Method #########
     def getSolution(self):
