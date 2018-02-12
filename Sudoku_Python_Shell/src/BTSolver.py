@@ -32,8 +32,8 @@ class BTSolver:
                 for n in self.network.getNeighborsOfVariable(v):
                     if ((not n.isAssigned()) and (v.getAssignment() in n.domain.values)):
                         n.removeValueFromDomain(v.getAssignment())
-                        if (n.domain.isEmpty()):
-                            return False
+                    if (n.domain.isEmpty()):
+                        return False
         return True     
 
     def norvigCheck(self):
