@@ -27,7 +27,14 @@ class BTSolver:
         """
            TODO:  Implement forward checking.
         """
-        pass
+        for v in self.network.variables:
+            if (v.isAssigned()):
+                for n in self.network.getNeighborsOfVariable(v):
+                    if ((not n.isAssigned()) and (v.getAssignment() in n.domain.values)):
+                        n.removeValueFromDomain(v.getAssignment())
+                        if (n.domain.isEmpty()):
+                            return False
+        return True     
 
     def norvigCheck(self):
         """
