@@ -6,108 +6,162 @@ import Constraint
 import ConstraintNetwork
 import time
 import sys
-import operator
 
 class BTSolver:
 
-    ######### Constructors Method #########
-    def __init__(self, gb, val_sh, var_sh, cc):
+    # ==================================================================
+    # Constructors
+    # ==================================================================
+
+    def __init__ ( self, gb, trail, val_sh, var_sh, cc ):
         self.network = ConstraintNetwork.ConstraintNetwork(gb)
-        self.trail = Trail.masterTrailVariable
         self.hassolution = False
         self.gameboard = gb
+        self.trail = trail
 
         self.varHeuristics = var_sh
         self.valHeuristics = val_sh
         self.cChecks = cc
 
-    ######### Implement These Methods #########
+    # ==================================================================
+    # Consistency Checks
+    # ==================================================================
 
-    def forwardChecking(self):
-        """
-           TODO:  Implement forward checking.
-        """
+    # Basic consistency check, no propagation done
+    def assignmentsCheck ( self ):
+        for c in self.network.getConstraints():
+            if not c.isConsistent():
+                return False
+        return True
+
+    """
+        Part 1 TODO: Implement the Forward Checking Heuristic
+
+        This function will do both Constraint Propagation and check
+        the consistency of the network
+
+        (1) If a variable is assigned then eliminate that value from
+            the square's neighbors.
+
+        Note: remember to trail.push variables before you assign them
+        Return: true is assignment is consistent, false otherwise
+    """
+    def forwardChecking ( self ):
         for v in self.network.variables:
             if (v.isAssigned()):
                 for n in self.network.getNeighborsOfVariable(v):
                     if ((not n.isAssigned()) and (v.getAssignment() in n.domain.values)):
+                        self.trail.push(n)
                         n.removeValueFromDomain(v.getAssignment())
                     if (n.domain.isEmpty()):
                         return False
-        return True     
+        return True    
 
-    def norvigCheck(self):
-        """
-            TODO: Implement Maintaining Arc Consistency.
-        """
+
+    """
+        Part 2 TODO: Implement both of Norvig's Heuristics
+
+        This function will do both Constraint Propagation and check
+        the consistency of the network
+
+        (1) If a variable is assigned then eliminate that value from
+            the square's neighbors.
+
+        (2) If a constraint has only one possible place for a value
+            then put the value there.
+
+        Note: remember to trail.push variables before you assign them
+        Return: true is assignment is consistent, false otherwise
+    """
+    def norvigCheck ( self ):
         return False
 
+    """
+         Optional TODO: Implement your own advanced Constraint Propagation
 
-    def assignmentsCheck(self):
-        """
-            default consistency check. Ensures no two variables are assigned to the same value.
-            @return true if consistent, false otherwise.
-        """
-        for v in self.network.variables:
-            if v.isAssigned():
-                for vOther in self.network.getNeighborsOfVariable(v):
-                    if v.getAssignment() == vOther.getAssignment():
-                        return False
-        return True
+         Completing the three tourn heuristic will automatically enter
+         your program into a tournament.
+     """
+    def getTournCC ( self ):
+        return None
 
-    def getfirstUnassignedVariable(self):
-        """
-            default next variable selection heuristic. Selects the first unassigned variable.
-            @return first unassigned variable. null if no variables are unassigned.
-        """
+    # ==================================================================
+    # Variable Selectors
+    # ==================================================================
+
+    # Basic variable selector, returns first unassigned variable
+    def getfirstUnassignedVariable ( self ):
         for v in self.network.variables:
             if not v.isAssigned():
                 return v
+
+        # Everything is assigned
         return None
 
-    def getMRV(self):
-        """
-            TODO: Implement MRV heuristic
-            @return variable with minimum remaining values that isn't assigned, null if all variables are assigned.
-        """
-        mini = sys.maxsize
-        s_v = None
+    """
+        Part 1 TODO: Implement the Minimum Remaining Value Heuristic
+
+        Return: The unassigned variable with the smallest domain
+    """
+    def getMRV ( self ):
+        mrv = None
+        mini = float("inf") 
         for v in self.network.variables:
-            if not v.isAssigned():
-                 m = len(self.network.getConstraintsContainingVariable(v))
-                 if m< mini:
-                     mini = m
-                     s_v = v       
-        return s_v
-        
+            if not v.isAssigned() and (v.domain.size() < mini):
+                mrv = v
+                mini = v.domain.size()
+        return mrv
 
-    def getDegree(self):
-        """
-            TODO: Implement Degree heuristic
-            @return variable constrained by the most unassigned variables, null if all variables are assigned.
-        """
-        pass
+    """
+        Part 2 TODO: Implement the Degree Heuristic
 
-    def MRVwithTieBreaker(self):
-        """
-            TODO: Implement MRV with Degree heuristic Tie Breaker
-        """
-        pass
+        Return: The unassigned variable with the most unassigned neighbors
+    """
+    def getDegree ( self ):
+        return None
 
-    def getValuesInOrder(self, v):
-        """
-            Default value ordering.
-            @param v Variable whose values need to be ordered
-            @return values ordered by lowest to highest.
-        """
+    """
+        Part 2 TODO: Implement the Minimum Remaining Value Heuristic
+                       with Degree Heuristic as a Tie Breaker
+
+        Return: The unassigned variable with, first, the smallest domain
+                and, second, the most unassigned neighbors
+    """
+    def MRVwithTieBreaker ( self ):
+        return None
+
+    """
+         Optional TODO: Implement your own advanced Variable Heuristic
+
+         Completing the three tourn heuristic will automatically enter
+         your program into a tournament.
+     """
+    def getTournVar ( self ):
+        return None
+
+    # ==================================================================
+    # Value Selectors
+    # ==================================================================
+
+    # Default Value Ordering
+    def getValuesInOrder ( self, v ):
         values = v.domain.values
-        return sorted(values)
+        return sorted( values )
 
+    """
+        Part 1 TODO: Implement the Least Constraining Value Heuristic
+
+        The Least constraining value is the one that will knock the least
+        values out of it's neighbors domain.
+
+        Return: A list of v's domain sorted by the LCV heuristic
+                The LCV is first and the MCV is last
+    """
 
     def __sortKey(self, value, v):
         constraintCount = 0
         for var in self.network.getNeighborsOfVariable(v):
-            if value in var.Values():
+            if value in var.getValues():
                 constraintCount += 1
         return constraintCount
 
@@ -117,78 +171,97 @@ class BTSolver:
         """
         return sorted(v.domain.values, key=lambda i:self.__sortKey(i,v))
 
+    """
+         Optional TODO: Implement your own advanced Value Heuristic
 
-        
+         Completing the three tourn heuristic will automatically enter
+         your program into a tournament.
+     """
+    def getTournVal ( self, v ):
+        return None
 
-    ######### Accessors Method #########
-    def getSolution(self):
-        return self.network.toSudokuBoard(self.gameboard.p, self.gameboard.q)
+    # ==================================================================
+    # Engine Functions
+    # ==================================================================
 
-    # @return time required for the solver to attain in seconds
-    def getTimeTaken(self):
-        return self.endTime - self.startTime
-
-    ######### Engine Methods #########
-    def solve(self, level = 0):
+    def solve ( self ):
         if self.hassolution:
             return
 
-        # Select unassigned variable
+        # Variable Selection
         v = self.selectNextVariable()
 
         # check if the assigment is complete
-        if (v == None):
+        if ( v == None ):
             for var in self.network.variables:
+
+                # If all variables haven't been assigned
                 if not var.isAssigned():
-                    raise ValueError("Something happened with the variable selection heuristic")
+                    print ( "Error" )
+
+            # Success
             self.hassolution = True
             return
 
-        for i in self.getNextValues(v):
+        # Attempt to assign a value
+        for i in self.getNextValues( v ):
 
+            # Store place in trail and push variable's state on trail
             self.trail.placeTrailMarker()
-            v.updateDomain(Domain.Domain(i))
+            self.trail.push( v )
 
-            # move to the next assignment
+            # Assign the value
+            v.assignValue( i )
+
+            # Propagate constraints, check consistency, recurse
             if self.checkConsistency():
-                self.solve(level + 1)
+                self.solve()
 
+            # If this assignment succeeded, return
             if self.hassolution:
                 return
 
-            # if this assignment failed at any stage, backtrack
+            # Otherwise backtrack
             self.trail.undo()
 
-    def checkConsistency(self):
-        '''which consistency check to run but it is up to you when implementing the heuristics to break ties using the other heuristics passed in'''
+    def checkConsistency ( self ):
         if self.cChecks == "forwardChecking":
             return self.forwardChecking()
+
         if self.cChecks == "norvigCheck":
             return self.norvigCheck()
+
+        if self.cChecks == "tournCC":
+            return self.getTournCC()
+
         else:
             return self.assignmentsCheck()
 
-    def selectNextVariable(self):
-        """
-            Selects the next variable to check.
-            @return next variable to check. null if there are no more variables to check.
-        """
+    def selectNextVariable ( self ):
         if self.varHeuristics == "MinimumRemainingValue":
             return self.getMRV()
-        elif self.varHeuristics == "Degree":
+
+        if self.varHeuristics == "Degree":
             return self.getDegree()
-        elif self.varHeuristics == "MRVwithTieBreaker":
+
+        if self.varHeuristics == "MRVwithTieBreaker":
             return self.MRVwithTieBreaker()
+
+        if self.varHeuristics == "tournVar":
+            return self.getTournVar()
+
         else:
             return self.getfirstUnassignedVariable()
 
-    def getNextValues(self, v):
-        """
-            Value Selection Heuristics. Orders the values in the domain of the variable
-            passed as a parameter and returns them as a list.
-            @return List of values in the domain of a variable in a specified order.
-        """
+    def getNextValues ( self, v ):
         if self.valHeuristics == "LeastConstrainingValue":
-            return self.getValuesLCVOrder(v)
+            return self.getValuesLCVOrder( v )
+
+        if self.valHeuristics == "tournVal":
+            return self.getTournVal( v )
+
         else:
-            return self.getValuesInOrder(v)
+            return self.getValuesInOrder( v )
+
+    def getSolution ( self ):
+        return self.network.toSudokuBoard(self.gameboard.p, self.gameboard.q)
