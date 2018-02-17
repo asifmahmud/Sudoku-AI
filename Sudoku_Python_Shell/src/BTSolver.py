@@ -46,16 +46,27 @@ class BTSolver:
         Note: remember to trail.push variables before you assign them
         Return: true is assignment is consistent, false otherwise
     """
+
+
     def forwardChecking ( self ):
-        for v in self.network.variables:
-            if (v.isAssigned()):
-                for n in self.network.getNeighborsOfVariable(v):
-                    if ((not n.isAssigned()) and (v.getAssignment() in n.domain.values)):
-                        self.trail.push(n)
-                        n.removeValueFromDomain(v.getAssignment())
-                    if (n.domain.isEmpty()):
+        # Get the modified variables
+        mVariables = set([v for c in self.network.getModifiedConstraints() for v in c.vars])
+        
+        for v in mVariables:
+            if (v.getDomain().isEmpty()):
+                return False
+            for n in self.network.getNeighborsOfVariable(v):
+                if (v.getAssignment() in n.getValues()):
+                    if (n.isAssigned()):
                         return False
-        return True    
+                    self.trail.push(n)
+                    n.removeValueFromDomain(v.getAssignment())
+
+            # Check consistency
+            for c in self.network.getConstraintsContainingVariable(v):
+                if not c.isConsistent():
+                    return False
+        return True
 
 
     """
@@ -135,7 +146,7 @@ class BTSolver:
 
          Completing the three tourn heuristic will automatically enter
          your program into a tournament.
-     """
+    """
     def getTournVar ( self ):
         return None
 
