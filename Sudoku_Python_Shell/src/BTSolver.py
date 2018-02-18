@@ -49,11 +49,9 @@ class BTSolver:
 
 
     def forwardChecking ( self ):
-        # Get the modified variables
-        mVariables = set([v for c in self.network.getModifiedConstraints() for v in c.vars])
-        
-        for v in mVariables:
-            if (v.getDomain().isEmpty()):
+        # Propagate the constraint
+        for v in self.network.variables:
+            if (v.domain.isEmpty()):
                 return False
             for n in self.network.getNeighborsOfVariable(v):
                 if (v.getAssignment() in n.getValues()):
@@ -61,11 +59,12 @@ class BTSolver:
                         return False
                     self.trail.push(n)
                     n.removeValueFromDomain(v.getAssignment())
+            
+        # Check consistency of the network
+        for c in self.network.getModifiedConstraints():
+            if not c.isConsistent():
+                return False
 
-            # Check consistency
-            for c in self.network.getConstraintsContainingVariable(v):
-                if not c.isConsistent():
-                    return False
         return True
 
 
@@ -170,17 +169,18 @@ class BTSolver:
     """
 
     def __sortKey(self, value, v):
-        constraintCount = 0
+        domainSize = 0
         for var in self.network.getNeighborsOfVariable(v):
-            if value in var.getValues():
-                constraintCount += 1
-        return constraintCount
+            domainSize += var.size()-1 if value in var.getValues() else var.size()
+        return domainSize
+
 
     def getValuesLCVOrder(self, v):
         """
             TODO: LCV heuristic
         """
-        return sorted(v.domain.values, key=lambda i:self.__sortKey(i,v))
+        return sorted(v.domain.values, key=lambda i: self.__sortKey(i,v), reverse=True)
+
 
     """
          Optional TODO: Implement your own advanced Value Heuristic
