@@ -58,13 +58,12 @@ def main ( ):
         print(sudokudata)
 
         solver = BTSolver.BTSolver( sudokudata, trail, val_sh, var_sh, cc )
-        a = time.time()
         solver.solve()
+
         if solver.hassolution:
             print( solver.getSolution() )
-            print( "Assignments: " + str(trail.getPushCount()) )
+            print( "Trail Pushes: " + str(trail.getPushCount()) )
             print( "Backtracks: " + str(trail.getUndoCount()) )
-            print( "Finish Time: " + str(time.time()-a) )
 
         else:
             print( "Failed to find a solution" )
@@ -86,16 +85,14 @@ def main ( ):
             sudokudata = SudokuBoard.SudokuBoard( filepath=os.path.join( file, f ) )
 
             solver = BTSolver.BTSolver( sudokudata, trail, val_sh, var_sh, cc )
-            a = time.time()
             solver.solve()
 
             if solver.hassolution:
                 numSolutions += 1;
 
         print ( "Solutions Found: " + str(numSolutions) )
-        print ( "Assignments: " + str(trail.getPushCount()) )
+        print ( "Trail Pushes: " + str(trail.getPushCount()) )
         print ( "Backtracks: "  + str(trail.getUndoCount()) )
-        print ( "Finish Time: " + str(time.time()-a) )
 
         return
 
@@ -103,14 +100,12 @@ def main ( ):
     print(sudokudata)
 
     solver = BTSolver.BTSolver( sudokudata, trail, val_sh, var_sh, cc )
-    a = time.time()
     solver.solve()
 
     if solver.hassolution:
         print( solver.getSolution() )
-        print( "Assignments: " + str(trail.getPushCount()) )
+        print( "Trail Pushes: " + str(trail.getPushCount()) )
         print( "Backtracks: " + str(trail.getUndoCount()) )
-        print( "Finish Time: " + str(time.time()-a) )
 
     else:
         print( "Failed to find a solution" )

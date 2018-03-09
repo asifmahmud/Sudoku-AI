@@ -5,7 +5,6 @@ import Trail
 import Constraint
 import ConstraintNetwork
 import time
-import sys
 
 class BTSolver:
 
@@ -43,11 +42,9 @@ class BTSolver:
         (1) If a variable is assigned then eliminate that value from
             the square's neighbors.
 
-        Note: remember to trail.push variables before you assign them
+        Note: remember to trail.push variables before you change their domain
         Return: true is assignment is consistent, false otherwise
     """
-
-
     def forwardChecking ( self ):
         # Propagate the constraint
         for v in self.network.variables:
@@ -59,14 +56,13 @@ class BTSolver:
                         return False
                     self.trail.push(n)
                     n.removeValueFromDomain(v.getAssignment())
-            
+
         # Check consistency of the network
         for c in self.network.getModifiedConstraints():
             if not c.isConsistent():
                 return False
-
+        
         return True
-
 
     """
         Part 2 TODO: Implement both of Norvig's Heuristics
@@ -80,11 +76,59 @@ class BTSolver:
         (2) If a constraint has only one possible place for a value
             then put the value there.
 
-        Note: remember to trail.push variables before you assign them
+        Note: remember to trail.push variables before you change their domain
         Return: true is assignment is consistent, false otherwise
     """
+
+    def norvigCheck( self ):
+        queue = [(x, y) for x in self.network.variables for y in self.network.getNeighborsOfVariable(x)]
+        while queue:
+            (x, y) = queue.pop()
+            if self.revise(x, y):
+                if not x.getValues():
+                    return False
+                for a in self.network.getNeighborsOfVariable(x):
+                    if a != x:
+                        queue.append((a, x))
+        return True
+
+    def revise(self, x, y):
+        revised = False
+        for a in x.getValues()[:]:
+            if self.every(lambda q: not self.constraints(a, q), y.getValues()):
+                x.removeValueFromDomain(a)
+                revised = True
+        return revised
+
+    def every(self, pred, seq):
+        for x in seq:
+            if not pred(x):
+                return False
+        return True
+
+    def constraints(self, a, b):
+        return a != b
+
+    '''
     def norvigCheck ( self ):
-        return False
+        for v in self.network.variables:
+            if v.domain.isEmpty(): return False
+            
+            if (v.size() == 1) and (not v.isAssigned()):
+                self.trail.push(v)
+                v.assignValue(v.getDomain()[0])
+
+            if v.isAssigned():
+                for n in self.network.getNeighborsOfVariable(v):
+                    if n.domain.isEmpty(): return False
+                    self.trail.push(n)
+                    n.removeValueFromDomain(v.getAssignment())
+            
+            for c in self.network.getConstraintsContainingVariable(v):
+                if not c.isConsistent(): return False
+
+        return True
+    '''
 
     """
          Optional TODO: Implement your own advanced Constraint Propagation
@@ -128,7 +172,18 @@ class BTSolver:
         Return: The unassigned variable with the most unassigned neighbors
     """
     def getDegree ( self ):
-        return None
+        mini = float("-inf")
+        toreturn = None
+        for v in self.network.variables:
+            if (not v.isAssigned()):
+                count = 0
+                for n in self.network.getNeighborsOfVariable(v):
+                    if (not n.isAssigned()):
+                        count += 1
+                if count > mini:
+                    mini = count
+                    toreturn = v
+        return toreturn
 
     """
         Part 2 TODO: Implement the Minimum Remaining Value Heuristic
@@ -138,14 +193,37 @@ class BTSolver:
                 and, second, the most unassigned neighbors
     """
     def MRVwithTieBreaker ( self ):
-        return None
+        mini = float("inf")
+        minVariables = [] 
+        for v in self.network.variables:
+            if not v.isAssigned():
+                if v.domain.size() < mini:
+                    minVariables = [v]
+                    mini = v.domain.size()
+                elif v.domain.size() == mini:
+                    minVariables.append(v)
+
+        if len(minVariables) == 0: return None
+        elif len(minVariables) == 1: return minVariables.pop()
+        else:
+            domainSize = float("-inf")
+            toReturn = None
+            for v in minVariables:
+                count = 0
+                for n in self.network.getNeighborsOfVariable(v):
+                    if (not n.isAssigned()):
+                        count += 1
+                if count > domainSize:
+                    domainSize = count
+                    toReturn = v
+            return toReturn
 
     """
          Optional TODO: Implement your own advanced Variable Heuristic
 
          Completing the three tourn heuristic will automatically enter
          your program into a tournament.
-    """
+     """
     def getTournVar ( self ):
         return None
 
@@ -175,12 +253,8 @@ class BTSolver:
         return domainSize
 
 
-    def getValuesLCVOrder(self, v):
-        """
-            TODO: LCV heuristic
-        """
+    def getValuesLCVOrder ( self, v ):
         return sorted(v.domain.values, key=lambda i: self.__sortKey(i,v), reverse=True)
-
 
     """
          Optional TODO: Implement your own advanced Value Heuristic
