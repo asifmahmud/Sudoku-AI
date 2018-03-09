@@ -109,27 +109,6 @@ class BTSolver:
     def constraints(self, a, b):
         return a != b
 
-    '''
-    def norvigCheck ( self ):
-        for v in self.network.variables:
-            if v.domain.isEmpty(): return False
-            
-            if (v.size() == 1) and (not v.isAssigned()):
-                self.trail.push(v)
-                v.assignValue(v.getDomain()[0])
-
-            if v.isAssigned():
-                for n in self.network.getNeighborsOfVariable(v):
-                    if n.domain.isEmpty(): return False
-                    self.trail.push(n)
-                    n.removeValueFromDomain(v.getAssignment())
-            
-            for c in self.network.getConstraintsContainingVariable(v):
-                if not c.isConsistent(): return False
-
-        return True
-    '''
-
     """
          Optional TODO: Implement your own advanced Constraint Propagation
 
@@ -225,7 +204,17 @@ class BTSolver:
          your program into a tournament.
      """
     def getTournVar ( self ):
-        return None
+        mini = float("inf")
+        toReturn = None
+        for v in self.network.variables:
+            if (not v.isAssigned()):
+                count = 0
+                for n in self.network.getNeighborsOfVariable(v):
+                    if (not n.isAssigned()): count += 1
+                if count < mini:
+                    mini = count
+                    toreturn = v
+        return toReturn
 
     # ==================================================================
     # Value Selectors
@@ -262,8 +251,15 @@ class BTSolver:
          Completing the three tourn heuristic will automatically enter
          your program into a tournament.
      """
+
+    def __sortKeyTourn(self, value, v):
+        count = 0
+        for var in self.network.getNeighborsOfVariable(v):
+            count = count + 1 if value in var.getValues() else count
+        return count
+
     def getTournVal ( self, v ):
-        return None
+        return sorted(v.domain.values, key=lambda i: self.__sortKeyTourn(i,v))
 
     # ==================================================================
     # Engine Functions
