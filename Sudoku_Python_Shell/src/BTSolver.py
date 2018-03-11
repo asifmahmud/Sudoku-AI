@@ -103,9 +103,6 @@ class BTSolver:
                 return False
 
         return True
-
-    def unitCheck(self, d, n):
-        return not (d in n.getValues())
             
 
     """
@@ -118,15 +115,13 @@ class BTSolver:
         queue = [(x, y) for x in self.network.variables for y in self.network.getNeighborsOfVariable(x)]
         while queue:
             (x, y) = queue.pop()
-            if self.revise(x, y):
-                if not x.getValues():
-                    return False
+            if self.needToRevise(x, y):
+                if not x.getValues(): return False
                 for a in self.network.getNeighborsOfVariable(x):
-                    if a != x:
-                        queue.append((a, x))
+                    if a != x: queue.append((a, x))
         return True
 
-    def revise(self, x, y):
+    def needToRevise(self, x, y):
         revised = False
         for a in x.getValues()[:]:
             if self.every(lambda q: not self.constraints(a, q), y.getValues()):
@@ -137,8 +132,7 @@ class BTSolver:
 
     def every(self, pred, seq):
         for x in seq:
-            if not pred(x):
-                return False
+            if not pred(x): return False
         return True
 
     def constraints(self, a, b):
@@ -235,7 +229,7 @@ class BTSolver:
         if   len(minVariables)  == 0: return None
         elif len(minVariables)  == 1: return minVariables.pop()
         else:
-            minVariables = sorted(minVariables, key=lambda x: self.__MADKey(x))
+            minVariables = sorted(minVariables, key=lambda x: self.__MADKey(x), reverse=True)
             return minVariables.pop()
 
     # ==================================================================
@@ -274,15 +268,8 @@ class BTSolver:
          your program into a tournament.
      """
 
-    def __sortKeyTourn(self, value, v):
-        count = 0
-        for var in self.network.getNeighborsOfVariable(v):
-            if value in var.getValues():
-                count += 1
-        return count
-
     def getTournVal ( self, v ):
-        return sorted(v.domain.values, key=lambda i: self.__sortKeyTourn(i,v))
+        return sorted(v.domain.values, key=lambda i: self.__sortKey(i,v), reverse=True)
 
     # ==================================================================
     # Engine Functions
