@@ -50,12 +50,13 @@ class BTSolver:
         for v in self.network.variables:
             if (v.domain.isEmpty()):
                 return False
-            for n in self.network.getNeighborsOfVariable(v):
-                if (v.getAssignment() in n.getValues()):
-                    if (n.isAssigned()):
-                        return False
-                    self.trail.push(n)
-                    n.removeValueFromDomain(v.getAssignment())
+            if v.isAssigned():
+                for n in self.network.getNeighborsOfVariable(v):
+                    if (v.getAssignment() in n.getValues()):
+                        if (n.isAssigned()):
+                            return False
+                        self.trail.push(n)
+                        n.removeValueFromDomain(v.getAssignment())
 
         # Check consistency of the network
         for c in self.network.getModifiedConstraints():
@@ -81,6 +82,39 @@ class BTSolver:
     """
 
     def norvigCheck( self ):
+        # (1) If a variable is assigned, eliminate that variable from the square's neighbors 
+        status = self.forwardChecking()
+        if not status: return status
+        
+        # (2) If a constraint has only one possible place for a value then put the value there.
+        candidates = [v for v in self.network.variables if v.size() == 1]
+        for v in candidates:
+            val = v.getValues()[0]
+            v.assignValue(val)
+            for n in self.network.getNeighborsOfVariable(v):
+                if val in n.getValues():
+                    if n.isAssigned(): return False
+                    self.trail.push(n)
+                    n.removeValueFromDomain(val)
+
+        # Check consistency of the network
+        for c in self.network.getModifiedConstraints():
+            if not c.isConsistent():
+                return False
+
+        return True
+
+    def unitCheck(self, d, n):
+        return not (d in n.getValues())
+            
+
+    """
+         Optional TODO: Implement your own advanced Constraint Propagation
+
+         Completing the three tourn heuristic will automatically enter
+         your program into a tournament.
+     """
+    def getTournCC ( self ):
         queue = [(x, y) for x in self.network.variables for y in self.network.getNeighborsOfVariable(x)]
         while queue:
             (x, y) = queue.pop()
@@ -96,6 +130,7 @@ class BTSolver:
         revised = False
         for a in x.getValues()[:]:
             if self.every(lambda q: not self.constraints(a, q), y.getValues()):
+                self.trail.push(x)
                 x.removeValueFromDomain(a)
                 revised = True
         return revised
@@ -108,15 +143,6 @@ class BTSolver:
 
     def constraints(self, a, b):
         return a != b
-
-    """
-         Optional TODO: Implement your own advanced Constraint Propagation
-
-         Completing the three tourn heuristic will automatically enter
-         your program into a tournament.
-     """
-    def getTournCC ( self ):
-        return None
 
     # ==================================================================
     # Variable Selectors
@@ -140,10 +166,11 @@ class BTSolver:
         mrv = None
         mini = float("inf") 
         for v in self.network.variables:
-            if not v.isAssigned() and (v.domain.size() < mini):
+            if (not v.isAssigned()) and (v.domain.size() < mini):
                 mrv = v
                 mini = v.domain.size()
         return mrv
+
 
     """
         Part 2 TODO: Implement the Degree Heuristic
@@ -151,18 +178,10 @@ class BTSolver:
         Return: The unassigned variable with the most unassigned neighbors
     """
     def getDegree ( self ):
-        mini = float("-inf")
-        toreturn = None
-        for v in self.network.variables:
-            if (not v.isAssigned()):
-                count = 0
-                for n in self.network.getNeighborsOfVariable(v):
-                    if (not n.isAssigned()):
-                        count += 1
-                if count > mini:
-                    mini = count
-                    toreturn = v
-        return toreturn
+        unassigned = [v for v in self.network.variables if not v.isAssigned()]
+        result = sorted(unassigned, key=lambda x: self.__MADKey(x), reverse=True)
+        return result.pop() if len(result) > 0 else None
+
 
     """
         Part 2 TODO: Implement the Minimum Remaining Value Heuristic
@@ -182,39 +201,42 @@ class BTSolver:
                 elif v.domain.size() == mini:
                     minVariables.append(v)
 
-        if len(minVariables) == 0: return None
-        elif len(minVariables) == 1: return minVariables.pop()
+        if   len(minVariables)  == 0: return None
+        elif len(minVariables)  == 1: return minVariables.pop()
         else:
-            domainSize = float("-inf")
-            toReturn = None
-            for v in minVariables:
-                count = 0
-                for n in self.network.getNeighborsOfVariable(v):
-                    if (not n.isAssigned()):
-                        count += 1
-                if count > domainSize:
-                    domainSize = count
-                    toReturn = v
-            return toReturn
+            minVariables = sorted(minVariables, key=lambda x: self.__MADKey(x), reverse=True)
+            return minVariables.pop()
+
+
+    def __MADKey(self, x):
+        count = 0
+        for n in self.network.getNeighborsOfVariable(x):
+            if (not n.isAssigned()): count += 1
+        return count
+
 
     """
          Optional TODO: Implement your own advanced Variable Heuristic
 
          Completing the three tourn heuristic will automatically enter
          your program into a tournament.
-     """
+    """
     def getTournVar ( self ):
         mini = float("inf")
-        toReturn = None
+        minVariables = [] 
         for v in self.network.variables:
-            if (not v.isAssigned()):
-                count = 0
-                for n in self.network.getNeighborsOfVariable(v):
-                    if (not n.isAssigned()): count += 1
-                if count < mini:
-                    mini = count
-                    toreturn = v
-        return toReturn
+            if not v.isAssigned():
+                if v.domain.size() < mini:
+                    minVariables = [v]
+                    mini = v.domain.size()
+                elif v.domain.size() == mini:
+                    minVariables.append(v)
+
+        if   len(minVariables)  == 0: return None
+        elif len(minVariables)  == 1: return minVariables.pop()
+        else:
+            minVariables = sorted(minVariables, key=lambda x: self.__MADKey(x))
+            return minVariables.pop()
 
     # ==================================================================
     # Value Selectors
@@ -255,7 +277,8 @@ class BTSolver:
     def __sortKeyTourn(self, value, v):
         count = 0
         for var in self.network.getNeighborsOfVariable(v):
-            count = count + 1 if value in var.getValues() else count
+            if value in var.getValues():
+                count += 1
         return count
 
     def getTournVal ( self, v ):
