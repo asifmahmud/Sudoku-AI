@@ -1,0 +1,169 @@
+1-2 hours:
+INSERT INTO cities
+    (cityID,parentID,hoursFromLondon)
+VALUES
+    ("Tryol","Austria",2),
+    ("Salzburg","Austria",2),
+    ("Brussels","Belgium",2);
+
+Portugal ,Porto Islands, 4
+Czech Republic, Prague 3
+Costa del Sol, Marbella 3
+Russia St Petersburg 4
+Spain Gran Canaria 5
+
+Austria Tryol 2
+Austria Salzburg 2
+Belgium Brussels 2
+Denmark Copenhagen 2
+France Paris 2
+France Lyon 2
+Germany Frankfurt 2 
+Germany Munich 2
+Germany Hamburg 2
+Ireland Dublin 2
+Netherlands Amsterdam 2
+Scotland Edinburgh 2
+Spain Bilbao 2
+Switzerland Basel 2 
+Switzerland Geneva 2
+Switzerland Zurich 2
+Romania Bucharest 3
+Hungary Budapest 3
+Finland Helsinki 3
+Spain Ibiza 3 
+Spain Majorca 3
+Spain Menorca 3
+Italy Milan 3
+Italy Venice 3
+Latvia Riga 3
+Lithuania Vilnius 3
+Poland Krakow 3 
+Poland Warsaw 3
+Portugal Lisbon 3
+Iceland Reykjavik 3
+Netherlands Rotterdam 3
+Bulgaria Sofia 3
+Spain Barcelona 3
+Spain Madrid 3
+Sweden Stockholm 3
+Tunisia Tunis 3
+Austria Vienna 3
+Bulgaria Sofia 4
+Greece Halkidiki 4 
+Greece Preveza 4
+Greece Kalamata 4
+Greece Athens 4
+Greece Corfu 4
+Greece Kefalonia 4 
+Greece Skiathos 4
+Greece Zante 4
+Spain Gibraltar 4
+Turkey Istanbul 4 
+Turkey Anakra 4
+Portugal Madeira 4
+Malta Valletta 4 
+Malta Birkirkara 4
+Morocco Casablanca 4
+Morocco Marrakech 4
+Morocco Rabat 4
+France Marseille 4
+France Montpellier 4
+France Nice 4
+Norway Oslo 4
+Italy Rome 4 
+Italy Naples 4 
+Italy Sicily 4
+Russia Moscow 4
+Spain Seville 4
+Lisbon Portugal 5
+Spain Fuerteventura 5
+Spain Lanzarote 5
+Spain Tenerife 5
+Greece Mytilene 5
+Greece Cyprus 5
+Greece Mykonos 5
+Greece Kos 5
+Greece Santorini 5
+Greece Crete 5
+Greece Rhodes 5
+Egypt Cairo 5
+Egypt Luxor 5
+Jordan Amman 5
+Syria Damascus 5
+Turkey Izmir 5
+Turkey Bodrum 5
+
+6
+Israel (Eilat)
+Africa, West (Nigeria)
+
+7
+Africa, West (Gambia, Ghana, Senegal)
+Saudi Arabia (Riyadh)
+Oman (Muscat)
+United Arab Emirates (Dubai)
+
+8
+Antigua (St John's)
+Barbados (Bridgetown)
+Bermuda (Hamilton)
+USA, East (New York, Boston)
+Canada, East (Montreal)
+St Lucia (Castries)
+Trinidad (Port of Spain)
+
+9
+India, North (New Delhi)
+India, West (Mumbai, Goa)
+Pakistan (Karachi)
+
+
+10
+Aruba (Oranjestad)
+Bahamas (Nassau)
+Bangladesh (Dhaka)
+Botswana (Gaborone)
+Cuba (Havana)
+Dominican Republic (Santo Domingo)
+Jamaica (Montego Bay)
+Kenya (Nairobi)
+St Kitts (Basseterre)
+Tobago
+Zimbabwe (Harare)
+
+11
+Canada, South (Ottawa, Toronto)
+USA, South East (Atlanta, Miami)
+USA, West (California, San Francisco)
+USA, North to West (Montana, Seattle)
+USA, South (New Orleans)
+Brazil (Rio de Janeiro, Sao Paulo)
+Argentina (Buenos Aires)
+Cayman Islands (George Town)
+Hong Kong
+Grenada (St George's)
+Mexico (Mexico City)
+Namibia (Windhoek)
+Chile (Santiago)
+South Africa (Cape Town)
+Sri Lanka (Colombo)
+Tanzania (Dodoma)
+Zambia (Lusaka)
+
+
+12
+Australia (Sydney)
+Thailand (Bangkok)
+Hawaii (Honolulu)
+Japan (Tokyo)
+Mauritius (Port Louis)
+South Korea (Seoul)
+Singapore
+Venezuela (Caracas)
+
+13
+Fiji (Suva)
+USA, West (Las Vegas)
+Malaysia (Kuala Lumpur)
+USA (Montana)

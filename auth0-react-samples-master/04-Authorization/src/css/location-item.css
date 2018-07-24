@@ -1,0 +1,96 @@
+
+.location-link {
+  text-transform: uppercase;
+  max-width: 125px !important;
+  letter-spacing: 2px;
+  text-decoration: none;
+  font-weight: 700;
+  color: #fff !important;
+  padding: .75rem;
+  border: 2px solid rgba(5,37,48,.01);
+  border-radius: .5rem;
+  background-color: #3CA861;
+  cursor: pointer;
+  margin-bottom: 5px;
+}
+
+.faces {
+  width:100%;
+  height:100%;
+  border-radius: 50%;
+}
+
+
+.location-img {
+ 	width: 100%;
+ 	height: 100%;
+}
+
+
+.location-type {
+	background-color: #51C1A4;
+	color: #fff;
+	border: none;
+}
+
+.location-price {
+	font-size: 1.25rem;
+}
+
+
+/*Animations*/
+.location-item {
+  transform: translateY(0.55em);
+  transition: transform .3s,-webkit-transform .3s;
+}
+
+.location-item:hover {
+  box-shadow: 0 .25rem 2rem -.5rem rgba(28,75,102,.3);	
+  transform: translateY(-0.55em);
+  transition: transform .3s,-webkit-transform .3s;
+}
+
+/*.location-link:hover,
+.location-link:focus {
+  box-shadow: 0 .25rem 2rem -.5rem rgba(28,75,102,.3);	
+  transform: translateY(-0.25em);
+  transition: transform .3s,-webkit-transform .3s;
+}
+*/
+
+.divclass{
+  font-size:5em;
+  color:grey;
+  cursor:pointer;
+}
+ 
+.divclass:hover .fa-bookmark:before {
+    box-shadow: 0 .25rem 2rem -.5rem rgba(28,75,102,.3);
+    background-color: #fff;
+    color: #2780E3 !important;
+    border-color: rgba(5,37,48,.01);
+}
+
+
+
+.divclass:hover .fa-plus-square:before {
+    box-shadow: 0 .25rem 2rem -.5rem rgba(28,75,102,.3);
+    background-color: #fff;
+    color: #2780E3 !important;
+    border-color: rgba(5,37,48,.01);
+}
+
+
+
+.imgStyle {
+  transform: 'translateY(-50%)';
+  position: 'relative';
+  left: '0px';
+  height: 'auto';
+  width: '100%';
+  top: '50%';
+}
+
+.cardMedia {
+  height: '200px !mportant';
+}

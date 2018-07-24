@@ -1,0 +1,4 @@
+
+require_once("costs.php");
+$costs = new Costs("xiaoxuah@uci.edu");
+$france_data = $costs->getCountry("FR");

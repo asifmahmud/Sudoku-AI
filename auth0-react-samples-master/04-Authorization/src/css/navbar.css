@@ -1,0 +1,40 @@
+
+.navbar {
+  background-color: #00bcd4;
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 2 !important;
+}
+
+.btn-primary{
+  background-color: #00bcd4;
+  border: none;
+  margin-top: 2%;
+}
+.navbar img{
+  float:left;
+  margin: 2%;
+  height: 5% !important;
+  width: 5% !important;
+}
+div.navbar-header a.navbar-brand {
+  font-family: "Caveat Brush";
+  margin-right: 20px;
+  margin-top:1%;
+  font-size: 23px;
+  color: #ffffff;
+}
+
+@media (max-width: 1050px) {
+  
+}
+@media (max-width: 1000px) {
+  .navbar-header {
+    float: none;
+    width: 100%;
+  }
+
+  .navbar-element {
+    display: inline-block;
+  }
+}
