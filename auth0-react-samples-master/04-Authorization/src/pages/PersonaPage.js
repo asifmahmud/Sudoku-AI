@@ -1,8 +1,5 @@
 import React from 'react';
-import Triposo from '../api/Triposo';
 import Firebase from '../api/Firebase';
-import LocationGridList from '../comps/LocationGridList';
-import LocationControls from '../comps/LocationControls';
 import Slider from 'material-ui/Slider';
 import RaisedButton from 'material-ui/RaisedButton';
 import CheckboxField from '../comps/Checkbox';
@@ -10,28 +7,19 @@ import Checkbox from 'material-ui/Checkbox';
 import ActionFavorite from 'material-ui/svg-icons/action/favorite';
 import ActionTheaters from 'material-ui/svg-icons/action/theaters';
 import ActionFavoriteBorder from 'material-ui/svg-icons/action/favorite-border';
-import Visibility from 'material-ui/svg-icons/action/visibility';
-import VisibilityOff from 'material-ui/svg-icons/action/visibility-off';
-import profilepic from '../assets/profilepic.jpg';
 import unknownprofile from '../assets/unknown_profile.png';
 import travelhistory from '../assets/travelhistory.jpg';
 import MobileTearSheet from '../comps/MobileTearSheet';
 import {List, ListItem} from 'material-ui/List';
-import ActionGrade from 'material-ui/svg-icons/action/grade';
-import ContentInbox from 'material-ui/svg-icons/content/inbox';
-import ContentDrafts from 'material-ui/svg-icons/content/drafts';
 import MapDrink from 'material-ui/svg-icons/maps/local-drink';
 import MapLandscape from 'material-ui/svg-icons/maps/local-florist';
-import ContentSend from 'material-ui/svg-icons/content/send';
 import Subheader from 'material-ui/Subheader';
 import Toggle from 'material-ui/Toggle';
-import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
-import FlatButton from 'material-ui/FlatButton';
+import {Card, CardHeader, CardMedia, CardText} from 'material-ui/Card';
 import CircularProgress from 'material-ui/CircularProgress';
 import Auth0 from '../api/Auth0';
 import DatePicker from 'material-ui/DatePicker';
 import FloatingActionButton from 'material-ui/FloatingActionButton';
-import ContentAdd from 'material-ui/svg-icons/content/add';
 
 
 const styles = {
@@ -89,6 +77,8 @@ class PersonaPage extends React.Component {
       body: JSON.stringify(data)
     })
   }
+
+
   adventureList = [{id: 1, category: 'camping', value: 'camping'}];
   foodList =  [{id: 1, category: 'coffee', value: 'coffee'}, {id: 2, category: 'buffet', value: 'buffet'}, {id: 3, category: 'authentic_dining_experience', value: 'authentic dining experience'}];
   artList = [{id: 1, category: 'jazz club', value: 'jazz club'}, {id: 2, category: 'music', value: 'music'}, {id: 3, category: 'museums', value:'museums'}];
@@ -100,7 +90,6 @@ class PersonaPage extends React.Component {
 
       componentWillMount() {
         this.setState({ profile: {} });
-  
         const { userProfile, getProfile, isAuthenticated, login } = this.props.auth;
         if(isAuthenticated()){
           if (!userProfile) {
@@ -108,15 +97,18 @@ class PersonaPage extends React.Component {
               this.setState({ profile });
                 var username =  this.state.profile.nickname;
                 var email =  this.state.profile.email;
+                var picture =  this.state.profile.picture;
                 this.post('/api/createUser', {username,email});
+                this.post('/api/Upload',{picture});
             });
           } else {
-            this.setState({ profile: userProfile });
-            var username =  this.state.profile.nickname;
-            var email =  this.state.profile.email;
-            this.post('/api/createUser', {username,email});
-          }
-         
+              this.setState({ profile: userProfile });
+              var username =  this.state.profile.nickname;
+              var email =  this.state.profile.email;
+              var picture =  this.state.profile.picture;
+              this.post('/api/createUser', {username,email});
+              this.post('/api/Upload',{picture});
+          }   
         } else {
           alert('not authenticated');
         }
@@ -124,8 +116,7 @@ class PersonaPage extends React.Component {
 
       handleCheckbox = (event, isChecked, value)  => {
        // event.preventDefault(); 
-    
-        if(isChecked==true){
+        if(isChecked===true){
           this.state.result.add(value);
           console.log(value+" added");
         } else {
@@ -340,7 +331,7 @@ class PersonaPage extends React.Component {
                     <br />
                     <MobileTearSheet>
                       <List>
-                          <Subheader>My Availabilties</Subheader>
+                          <Subheader>My Availabilities</Subheader>
                             <div style={styles.datePicker} >
                               <p> 03/08/2018 - 07/08/2018</p>
                               <DatePicker hintText="Start" container="inline" />

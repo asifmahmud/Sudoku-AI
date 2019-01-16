@@ -4,8 +4,7 @@ import Firebase from '../api/Firebase';
 import GeoLocation from '../api/GeoLocation';
 import AutoComplete from '../comps/AutoComplete';
 import LocationGridList from '../comps/LocationGridList';
-import LocationControls from '../comps/LocationControls';
-
+import Loading from 'react-loading-animation';
 import '../css/mainpage.css';
 import '../css/navbar.css';
 import '../css/global.css'
@@ -23,9 +22,15 @@ class MainPage extends React.Component {
 			locations: [],
 			mounted: false,
 			firstSlider: 1,
-			secondSlider: 50
+      secondSlider: 50,
+      GeoLocation: new GeoLocation(),
+      value: '', 
+      suggestions: [],
+      redirect: false, 
 		};	
-	}
+  }
+  
+  
 
 	goTo(route) {
 		this.props.history.replace(`/${route}`)
@@ -41,7 +46,7 @@ class MainPage extends React.Component {
 	
 
 	async componentDidMount(){
-		const results = await this.state.Triposo.getCitiesbyCat(['wineries','musicandshows','museums'], "33.6845673,-117.82650490000003", 70000000);		
+		const results = await this.state.Triposo.getCitiesbyCat(['wineries','music','museum'], "33.6845673,-117.82650490000003", 70000000);		
 		this.setState({ pageData: results });
 		this.setState({ mounted: true });
 		const db = new Firebase();
@@ -49,10 +54,9 @@ class MainPage extends React.Component {
 		console.log( await db.getInterests());
 	}
 
-  
 	render(){
+    if (this.state.mounted === true){
 		const { isAuthenticated, login } = this.props.auth;
-	      
 		return(
       <div>
 				 <Navbar fluid>
@@ -105,8 +109,8 @@ class MainPage extends React.Component {
                   </Button>
                 )
             }
-			  	  <AutoComplete class= "navbar-element pull-right"
-            />
+			  	  {/*<AutoComplete class= "navbar-element pull-right"
+            />*/}
             {
               isAuthenticated() && (
                   <Button 
@@ -122,8 +126,11 @@ class MainPage extends React.Component {
           </Navbar.Header>
        	</Navbar>
       </div>
-		);
-	}
+    );
+  } else {
+    return (<Loading/>);
+  }
+}
 }
 
 export default MainPage;

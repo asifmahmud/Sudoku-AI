@@ -47,7 +47,7 @@ class LocationPage extends React.Component {
 			Firebase: new Firebase(),
 			Triposo: new Triposo(),
 			pageData: [],
-			locations: [],
+		
 			mounted: false,
 			placeID: '',
 			address:'',
@@ -56,19 +56,22 @@ class LocationPage extends React.Component {
 			autoHideDuration: 4000,
 			message: 'Event added to your calendar',
 			open: false,
-
-		};
+			cat :['Food','Art','Adventure'],
+		};  
 	
 		this.getActivity = this.getActivity.bind(this);
 	}
 
+
+
 	async componentDidMount(){
+		console.log(this.props.match.params.id);
 		const resultsFood = await this.state.Triposo.getPOIByID(['eatingout','foodexperiences'],this.props.match.params.id);	
 		const resultsArt = await this.state.Triposo.getPOIByID(['museums','dancing'],this.props.match.params.id);	
 		const resultsAdventure = await this.state.Triposo.getPOIByID(['hiking','paragliding','adrenaline'],this.props.match.params.id);	
-		const hots = await this.state.Triposo.getHot();	
-		console.log(hots);
-		this.setState({ localHot: hots})
+	//	const hots = await this.state.Triposo.getHot();	
+	//	console.log(hots);
+	//	this.setState({ localHot: hots})
 		this.setState({ pageData: [resultsFood, resultsArt, resultsAdventure] });
 		this.setState({ mounted: true });
 	}
@@ -79,7 +82,6 @@ class LocationPage extends React.Component {
 		this.setState({
 			open: true,
 		});
-		
 		this.state.Firebase.addActivityToPlan('zAaB9hXIVi0RvGmhOWRN', 'plan1', activityInfo);
 	}
 
@@ -130,12 +132,10 @@ class LocationPage extends React.Component {
 		let apiData = [[], [], []];
 		let apiHot = [];
 		if (this.state.mounted){
-			for(let item of this.state.localHot.results[0].pois){
-
+			/*for(let item of this.state.localHot.results[0].pois){
 				var min = 0;
 				var max = 3;
 				var rand =   Math.round(min + (Math.random() * (max-min)));
-			
 				let imageSource = (item.images.length === 0 ? pilo: item.images[0].source_url);
 				let dayHours = {};
 				let data = {
@@ -165,14 +165,13 @@ class LocationPage extends React.Component {
 					sun_close: item.opening_hours && item.opening_hours.days && item.opening_hours.days.sun && item.opening_hours.days.sun[0] && item.opening_hours.days.sun[0].end && item.opening_hours.days.sun[0].end.hour? item.opening_hours.days.sun[0].end.hour: "unknown",
 				};
 				apiHot.push(data);
-		
 			}
-			
+			*/
 		
 	
 			for(let i = 0; i < this.state.pageData.length; i++){
 				console.log(this.state.pageData[i]);
-				 for(let j = 0; j <(this.state.pageData[i].results).length; j++){
+				for(let j = 0; j <(this.state.pageData[i].results).length; j++){
 					let item = (this.state.pageData[i].results)[j];
 					
 					var min = 0;
@@ -191,7 +190,6 @@ class LocationPage extends React.Component {
 						price: item.price_tier,
 						tags: item.tag_labels,
 						hours: item.opening_hours,
-						googleID: item.google_place_id,
 						mon_open: item.opening_hours && item.opening_hours.days && item.opening_hours.days.mon && item.opening_hours.days.mon[0] && item.opening_hours.days.mon[0].start && item.opening_hours.days.mon[0].start.hour? item.opening_hours.days.mon[0].start.hour: "unknown",
 						mon_close: item.opening_hours && item.opening_hours.days && item.opening_hours.days.mon && item.opening_hours.days.mon[0] && item.opening_hours.days.mon[0].end && item.opening_hours.days.mon[0].end.hour? item.opening_hours.days.mon[0].end.hour: "unknown",
 						tue_open: item.opening_hours && item.opening_hours.days && item.opening_hours.days.tue && item.opening_hours.days.tue[0] && item.opening_hours.days.tue[0].start && item.opening_hours.days.tue[0].start.hour? item.opening_hours.days.tue[0].start.hour: "unknown",
@@ -207,27 +205,26 @@ class LocationPage extends React.Component {
 						sun_open: item.opening_hours && item.opening_hours.days && item.opening_hours.days.sun && item.opening_hours.days.sun[0] && item.opening_hours.days.sun[0].start && item.opening_hours.days.sun[0].start.hour? item.opening_hours.days.sun[0].start.hour: "unknown",
 						sun_close: item.opening_hours && item.opening_hours.days && item.opening_hours.days.sun && item.opening_hours.days.sun[0] && item.opening_hours.days.sun[0].end && item.opening_hours.days.sun[0].end.hour? item.opening_hours.days.sun[0].end.hour: "unknown",
 					};
-					// console.log(data);
 					apiData[i].push(data);
 				}
-			}
+			} 
 		
 		}
 		else content = <Loading />
 		console.log(apiData);
 		return(
 			<div>
-				<div class="root">
-				<div class="container">
+			
+					{/*<div class="container">
 						<div class="row">
 							<h3 class="ml-4">Local hotspots</h3>
 						</div>
-					</div>
-                     
+					
+                   
 					<GridList style={styles.gridList} cols={2.2}>
-					{(apiHot).map((tile) => {
-						return <ActivityTile data={tile} styles={styles}  getActivity={this.getActivity} />
-					})}
+						{(apiHot).map((tile) => {
+							return <ActivityTile data={tile} styles={styles}  getActivity={this.getActivity} />
+						})}
 					</GridList>
 					<Snackbar
           				open={this.state.open}
@@ -237,64 +234,35 @@ class LocationPage extends React.Component {
           				onActionClick={this.handleActionClick}
           				onRequestClose={this.handleEventRequestClose}
         			/>
-					<div class="container">
-						<div class="row">
-							<h3 class="ml-4">Food</h3>
+					</div>*/}
+					 
+					{(apiData).map((data,index) => {
+						return(
+							<div class="container">
+								<div class="row">
+									<h3 class="ml-4">{this.state.cat[index]}</h3>
+								</div>
+							
+							<GridList style={styles.gridList} cols={2.2}>
+								{(data).map((tile) => {
+									return <ActivityTile data={tile} styles={styles}  getActivity={this.getActivity} />
+								})}
+							</GridList>
+							<Snackbar
+								open={this.state.open}
+								message={this.state.message}
+								action="undo"
+								autoHideDuration={this.state.autoHideDuration}
+								onActionClick={this.handleActionClick}
+								onRequestClose={this.handleEventRequestClose}
+							/>
 						</div>
-					</div>
-                     
-					<GridList style={styles.gridList} cols={2.2}>
-					{(apiData[0]).map((tile) => {
-						return <ActivityTile data={tile} styles={styles}  getActivity={this.getActivity} />
-					})}
-					</GridList>
-					<Snackbar
-          				open={this.state.open}
-          				message={this.state.message}
-         				action="undo"
-          				autoHideDuration={this.state.autoHideDuration}
-          				onActionClick={this.handleActionClick}
-          				onRequestClose={this.handleEventRequestClose}
-        			/>
-					<div class="container">
-						<div class="row">
-							<h3 class="ml-4">Arts</h3>
-						</div>
-					</div>
-                     
-					<GridList style={styles.gridList} cols={2.2}>
-						{apiData[1].map((tile) => (
-							<ActivityTile data={tile} styles={styles}  getActivity={this.getActivity} />
-						))}	
-					</GridList>
-					<Snackbar
-          				open={this.state.open}
-          				message={this.state.message}
-         				action="undo"
-          				autoHideDuration={this.state.autoHideDuration}
-          				onActionClick={this.handleActionClick}
-          				onRequestClose={this.handleEventRequestClose}
-        			/>
-					<div class="container">
-						<div class="row">
-							<h3 class="ml-4">Adventure</h3>
-						</div>
-					</div>
-                     
-					<GridList style={styles.gridList} cols={2.2}>
-					{apiData[2].map((tile) => (
-							<ActivityTile data={tile} styles={styles}  getActivity={this.getActivity} />
-					))}
-					</GridList>
-					<Snackbar
-          				open={this.state.open}
-          				message={this.state.message}
-         				action="undo"
-          				autoHideDuration={this.state.autoHideDuration}
-          				onActionClick={this.handleActionClick}
-          				onRequestClose={this.handleEventRequestClose} />
-  				</div>			
-			</div>
+						)
+
+					}
+				)
+			}
+			</div>	 		
 		);
 	}
 }

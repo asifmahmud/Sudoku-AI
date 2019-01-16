@@ -12,12 +12,10 @@ import GeoLocation from '../api/GeoLocation';
 
 function toSuggestArray (arr){
     var suggestions = [];
-    loop: { 
-        for(var i=0; i<arr.length; i++) {
-          suggestions.push({label: arr[i]});
-        }
+    for(var i=0; i<arr.length; i++) {
+        suggestions.push({label: arr[i]});
     }
-    return suggestions
+    return suggestions;
 }
 
 function renderInput(inputProps) {
@@ -148,7 +146,6 @@ class AutoComplete extends React.Component {
 
   render() {
     const { classes } = this.props;
-    const { value, suggestions } = this.state;
     return (
       <div class="pull-right">
       <Autosuggest

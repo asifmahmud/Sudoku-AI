@@ -1,7 +1,6 @@
-import React, {Component} from 'react';
+import React from 'react';
 import Calendar from '../comps/Calendar';
-import NavBar from '../comps/NavBar';
-import TripSummary from '../comps/TripSummary';
+import TripPreference from '../comps/TripPreference';
 import SuggestionCard from '../comps/SuggestionCard';
 import Triposo from '../api/Triposo';
 
@@ -29,9 +28,9 @@ class CalendarPage extends React.Component {
 
 			let dayHours = activity.opening_hours.days[currentDayName];
 
-			if (dayHours.length == 0 || dayHours == undefined) return null;
+			if (dayHours.length === 0 || dayHours == undefined) return null;
 			else {
-				if (dayHours[0].start == null || dayHours[0].end == null) return null;
+				if (dayHours[0].start === null || dayHours[0].end == null) return null;
 				if (currentDate.getHours() >= dayHours[0].start.hour && currentDate.getHours() <= dayHours[0].end.hour){
 					return activity;
 				}
@@ -65,7 +64,7 @@ class CalendarPage extends React.Component {
 
 		while (unsortedEvents.length != 0){
 			let poi = this.findOpenActivity(unsortedEvents, currentDate);//get poi that is open on current hour and day
-			if (poi != null) {
+			if (poi !== null) {
 
 				let month = currentDate.getMonth();
 				let day = currentDate.getDate();
@@ -110,7 +109,7 @@ class CalendarPage extends React.Component {
 			<div> 
 				<div className="row">
 					<div class="container col-md-2">
-						<TripSummary />
+						<TripPreference />
 					</div>
 					<div class="container col-md-7">
 						<h3>My Trip</h3>

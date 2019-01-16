@@ -1,12 +1,44 @@
 import NavBar from '../comps/NavBar';
 import React from 'react';
 import Triposo from '../api/Triposo';
-import MobileTearSheet from '../../../MobileTearSheet';
+import MobileTearSheet from '../comps/MobileTearSheet';
+import Post from '../comps/Post';
 import Avatar from 'material-ui/Avatar';
 import {List, ListItem} from 'material-ui/List';
 import Subheader from 'material-ui/Subheader';
 import Divider from 'material-ui/Divider';
 import CommunicationChatBubble from 'material-ui/svg-icons/communication/chat-bubble';
+import zoe from '../assets/zoe.jpg';
+import jon from '../assets/jon.jpg';
+import joshua from '../assets/joshua.jpg';
+import david from '../assets/david.jpg';
+import sean from '../assets/sean.jpg';
+import { Grid, Row, Col } from 'react-flexbox-grid';
+import ApolloClient from 'apollo-boost';
+import { ApolloProvider } from "react-apollo";
+import Posts from "../comps/Posts";
+import Pusher from 'pusher-js';
+
+const client = new ApolloClient({
+  uri: "http://localhost:3001/graphql"
+});
+
+
+
+const icons =[ zoe, jon, joshua, david, sean ];
+const styles = {
+  row: {
+    display: 'flex',
+    justifyContent: 'center',
+  },
+  avatar: {
+    margin: 10,
+  },
+  bigAvatar: {
+    width: 60,
+    height: 60,
+  },
+};
 
 class FriendPage extends React.Component {
 	constructor(props){
@@ -14,46 +46,43 @@ class FriendPage extends React.Component {
 		this.state = {
 			Triposo: new Triposo(),
 			pageData: null,
-			mounted: false
-		};
-	}
+      mounted: false,
+    };
+    
+    this.pusher = new Pusher("0d56ce7f6de4e5484e06", {
+      cluster: 'eu',
+      encrypted: true
+     })
+  	}
+
+  componentDidMount(){
+    if ('actions' in Notification.prototype) {
+      console.log('You can enjoy notification feature');
+    } else {
+      console.log('Sorry notifications are NOT supported on your browser');
+    }
+  }
 
   render(){
     const { isAuthenticated, login } = this.props.auth;
 		return(
-      <div>
+      <ApolloProvider client={client}>
+        <div>
+          <div style={styles.row}>
           <MobileTearSheet>
             <List>
-              <Subheader>Recent chats</Subheader>
-              <ListItem
-                primaryText="Brendan Lim"
-                leftAvatar={<Avatar src="images/ok-128.jpg" />}
-                rightIcon={<CommunicationChatBubble />}
-              />
-              <ListItem
-                primaryText="Eric Hoffman"
-                leftAvatar={<Avatar src="images/kolage-128.jpg" />}
-                rightIcon={<CommunicationChatBubble />}
-              />
-              <ListItem
-                primaryText="Grace Ng"
-                leftAvatar={<Avatar src="images/uxceo-128.jpg" />}
-                rightIcon={<CommunicationChatBubble />}
-              />
-              <ListItem
-                primaryText="Kerem Suer"
-                leftAvatar={<Avatar src="images/kerem-128.jpg" />}
-                rightIcon={<CommunicationChatBubble />}
-              />
-              <ListItem
-                primaryText="Raquel Parrado"
-                leftAvatar={<Avatar src="images/raquelromanp-128.jpg" />}
-                rightIcon={<CommunicationChatBubble />}
-              />
+              <Subheader>Recent Trips By Friends</Subheader>
+								{(icons).map((icon) => (
+                    <ListItem
+                      primaryText="Brendan Lim"
+                      leftAvatar={<Avatar alt="Remy Sharp" src={icon} />}
+                      rightIcon={<CommunicationChatBubble />}
+                    />							
+								))}
             </List>
             <Divider />
             <List>
-              <Subheader>Previous chats</Subheader>
+              <Subheader>All Public Trips</Subheader>
               <ListItem
                 primaryText="Chelsea Otakan"
                 leftAvatar={<Avatar src="images/chexee-128.jpg" />}
@@ -64,7 +93,13 @@ class FriendPage extends React.Component {
               />
             </List>
           </MobileTearSheet>
-      </div>
+          <section className="App-main">
+          {/* pass the pusher object and apollo to the posts component */}
+          <Posts pusher={this.pusher} apollo_client={client}/>
+        </section>
+        </div>
+        </div>
+      </ApolloProvider>
     );
   }
 }

@@ -7,6 +7,9 @@ import Location from './pages/LocationPage';
 import Paypal from './pages/PaypalCheckout';
 import Callback from './Callback/Callback';
 import Calendar from './pages/CalendarPage';
+import Friend from './pages/FriendPage';
+import DayPlan from './pages/DayPlanner';
+import Test from './pages/test';
 import Auth from './Auth/Auth';
 import history from './history';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
@@ -27,12 +30,14 @@ export const makeMainRoutes = () => {
           <Route path="/persona" render={(props) => <Persona auth={auth} {...props} />} />
           <Route path="/paypal" render={(props) => <Paypal auth={auth} {...props} />} />
           <Route path="/calendar" render={(props) => <Calendar auth={auth} {...props} />} />
+          <Route path="/test" render={(props) => <Test auth={auth} {...props} />} />
           <Route path="/cities" render={(props) => <Cities auth={auth} {...props} />} />
+          <Route path="/dayplan" render={(props) => <DayPlan auth={auth} {...props} />} />
           <Route path="/friends" render={(props) => (
             !auth.isAuthenticated() ? (
-              <Redirect to="/persona"/>
+              <Redirect to="/login"/>
             ) : (
-              <App auth={auth} {...props} />
+              <Friend auth={auth} {...props} />
             )
           )} />
          	<Route path="/location/:id" render={(props) => <Location auth={auth} {...props} />} />

@@ -1,6 +1,5 @@
 //https://auth0.com/docs/metadata/apis
 
-
 const request = require('request');
 class Auth0 {
 	constructor(){

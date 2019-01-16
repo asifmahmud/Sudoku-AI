@@ -47,6 +47,7 @@ class MobileTearSheet extends Component {
         <div style={prepareStyles(styles.container)}>
           {this.props.children}
         </div>
+        <img style={prepareStyles(styles.bottomTear)} src="images/bottom-tear.svg" />
       </div>
     );
   }

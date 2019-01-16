@@ -2,8 +2,7 @@ import React from 'react';
 import Triposo from '../api/Triposo';
 import Firebase from '../api/Firebase';
 import LocationGridList from '../comps/LocationGridList';
-import LocationControls from '../comps/LocationControls';
-import TripSummary from '../comps/TripSummary';
+import TripPreference from '../comps/TripPreference';
 import GeoLocation from '../api/GeoLocation';
 import {
 	geocodeByAddress,
@@ -44,13 +43,8 @@ class CityPage extends React.Component{
 
 
 	async componentDidMount(){
-		window.initMap = this.initMap;
-		const gmapScriptEl = document.createElement('script');
-		gmapScriptEl.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyCb-9HOKDBFQEkgP4zrBR39ZJWsqd4kieY&libraries=places&callback=initMap';
-		document.querySelector('body').insertAdjacentElement('beforeend', gmapScriptEl);
-
-		
-		const results = await this.state.Triposo.getCitiesbyCat(['wineries','musicandshows','museums'], "33.6845673,-117.82650490000003", 70000000);		
+		const results = await this.state.Triposo.getCitiesbyCat('surfing');		
+		console.log(results);
 		this.setState({ pageData: results });
 		this.setState({ mounted: true });
 		const db = new Firebase();
@@ -97,27 +91,25 @@ class CityPage extends React.Component{
                 image: item.images[0].source_url,
                 icons: photos[rand].images
             };
-            apiData.push(data);
+			apiData.push(data);
+			
         }
-    }
+	}
     return (
 		<div>
 			<div class="root">
 				<div class="container">
 				<Row>
-          			<Col xs={4} md={2}>
-					  	<TripSummary />
+          			<Col xs={4} md={3}>
+					  	<TripPreference />
          			</Col>
-          			<Col xs={8} md={10}>
+          			<Col xs={8} md={9}>
 					  <LocationGridList data={apiData} />
          			</Col>
        			 </Row>
 				</div>
 			</div>
-		</div>
-
-
-        
+		</div>  
     );
   }
 }

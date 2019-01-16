@@ -1,7 +1,68 @@
 class Triposo {
 	constructor() {
-		this.url = "https://www.triposo.com/api/20180223/";
-		this.auth = "&account=R78U5P00&token=k51rwb9fplgsj120rhnlq386dkbfgqzf"
+		this.url = "https://www.triposo.com/api/20181213/";
+		this.auth = "&account=R78U5P00&token=k51rwb9fplgsj120rhnlq386dkbfgqzf";
+		this.abbr = {
+			"AL": "Alabama",
+			"AK": "Alaska",
+			"AS": "American Samoa",
+			"AZ": "Arizona",
+			"AR": "Arkansas",
+			"CA": "California",
+			"CO": "Colorado",
+			"CT": "Connecticut",
+			"DE": "Delaware",
+			"DC": "District Of Columbia",
+			"FM": "Federated States Of Micronesia",
+			"FL": "Florida",
+			"GA": "Georgia",
+			"GU": "Guam",
+			"HI": "Hawaii",
+			"ID": "Idaho",
+			"IL": "Illinois",
+			"IN": "Indiana",
+			"IA": "Iowa",
+			"KS": "Kansas",
+			"KY": "Kentucky",
+			"LA": "Louisiana",
+			"ME": "Maine",
+			"MH": "Marshall Islands",
+			"MD": "Maryland",
+			"MA": "Massachusetts",
+			"MI": "Michigan",
+			"MN": "Minnesota",
+			"MS": "Mississippi",
+			"MO": "Missouri",
+			"MT": "Montana",
+			"NE": "Nebraska",
+			"NV": "Nevada",
+			"NH": "New Hampshire",
+			"NJ": "New Jersey",
+			"NM": "New Mexico",
+			"NY": "New York",
+			"NC": "North Carolina",
+			"ND": "North Dakota",
+			"MP": "Northern Mariana Islands",
+			"OH": "Ohio",
+			"OK": "Oklahoma",
+			"OR": "Oregon",
+			"PW": "Palau",
+			"PA": "Pennsylvania",
+			"PR": "Puerto Rico",
+			"RI": "Rhode Island",
+			"SC": "South Carolina",
+			"SD": "South Dakota",
+			"TN": "Tennessee",
+			"TX": "Texas",
+			"UT": "Utah",
+			"VT": "Vermont",
+			"VI": "Virgin Islands",
+			"VA": "Virginia",
+			"WA": "Washington",
+			"WV": "West Virginia",
+			"WI": "Wisconsin",
+			"WY": "Wyoming"
+		}
 	}
 
 	async getCities(count){
@@ -15,36 +76,34 @@ class Triposo {
 		return result.json();
 	}
 
-	async getCitiesbyCat(cats=[], origin='', distance=''){
-		const catstr = cats.join('|');
-		const result = await fetch(this.url + 'location.json?child_tag_labels=' + catstr + '&musicandshows_score=>5&museums_score=>5&wineries_score=>5&annotate=distance:' + origin + '&distance=<' + distance +this.auth);
+	async getCitiesbyCat(cat){
+		const result = await fetch(this.url + 'location.json?child_tag_labels=' + cat + '&' + cat +'_score=>4' +this.auth);
 		return result.json();
 	}
 
-	async dayPlanner(location){
-		const fields = `?location_id=${location}&items_per_day=2`;
-		const result = await fetch(this.url + 'day_planner.json' + fields + this.auth);
-		return result.json();
+	async dayPlanner(params){
+     	Object.keys(params).forEach((key) => (params[key] == null) && delete params[key]);
+		  var request = Object.keys(params).map(key => key + '=' + params[key]).join('&');
+	  	const result = await fetch(this.url +'day_planner.json?'+request + this.auth);
+	 	return result.json();
 	}
 //+ '&order_by=-score' + '&fields' + fields
 	async getPOIByID(ids=[],location_id, count = 20){
 		const idstr = ids.join('|');
-		const fields = '&fields=google_place_id,intro,images,location_id,id,snippet,opening_hours,coordinates,score,best_for,price_tier,name';
+		const fields = '&fields=intro,images,location_id,id,snippet,opening_hours,coordinates,score,best_for,price_tier,name';
 		const result = await fetch(this.url + 'poi.json?location_id='+location_id+ '&tag_labels=' + idstr + fields+ this.auth)
 		return result.json();
 	}
 
-	async getHot(){
+	/*async getHot(){
 		const result = await fetch(this.url + 'local_highlights.json?tag_labels=drinks|dinner|food|wineries|eatingout|distilleries|museums|nightlife|musicandshows&latitude=42.3600825&longitude=-71.05888010000001'+ this.auth);
 		return result.json();
-	}
+	}*/
 
 	async getHotel(){
 		const result = await fetch(this.url + 'poi.json?bookable=1&location_id=Barcelona&tag_labels=hotels'+ this.auth);
 		return result.json();
 	}
-
-		
 }
 
 

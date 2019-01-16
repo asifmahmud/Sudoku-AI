@@ -1,7 +1,6 @@
 
 
-@media (max-width: 720px) {
-    .car-hover {
-        width: 100% !important;
-    }
-  }
+
+.card {
+    width: 80% !important;
+}

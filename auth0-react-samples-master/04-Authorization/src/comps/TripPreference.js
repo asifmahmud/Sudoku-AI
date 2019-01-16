@@ -8,10 +8,12 @@ const style = {
   margin: 12,
 };
 
-class TripSummary extends React.Component {
+
+
+class TripPreference extends React.Component {
 	render(){
 		return(
-			<div>
+			<div class="text-left mr-8">
 				<h3 class="text-left mb-7">Trip Preference</h3>
 				<hr/>					
 				<SelectField
@@ -32,4 +34,4 @@ class TripSummary extends React.Component {
 	}
 }
 
-export default TripSummary;
+export default TripPreference;
